@@ -6,7 +6,11 @@
 
 :root {
 	--accent: #2337ff;
+	--accent-light: #E3E6FF;
 	--accent-dark: #000d8a;
+	--info: #E0F2FE;
+	--info-dark: #3B82F6;
+	--info-darker: #0C4A6E;
 	--black: 15, 18, 25;
 	--gray: 96, 115, 159;
 	--gray-light: 229, 233, 240;
@@ -87,6 +91,7 @@ p {
 	margin-bottom: 1em;
 }
 .prose p {
+	margin-top: 2em;
 	margin-bottom: 2em;
 }
 textarea {
@@ -152,3 +157,5 @@ hr {
 	/* added line to stop words getting smushed together (as they go onto separate lines and some screen readers do not understand line feeds as a space */
 	white-space: nowrap;
 }
+
+

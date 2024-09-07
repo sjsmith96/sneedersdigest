@@ -1,0 +1,17 @@
+---
+const { formula } = Astro.props;
+import Latex from './Latex.astro';
+---
+
+<div>
+    <Latex formula={formula}/>
+</div>
+
+<style>
+    div {
+        text-align: center;
+        font-size: 1.5rem;
+    }
+</style>
+
+

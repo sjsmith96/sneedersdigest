@@ -1,0 +1,51 @@
+---
+const { content } = Astro.props;
+import { Icon } from 'astro-icon/components';
+import '../styles/global.css';
+---
+
+<div class="note">
+    <div class="note__header">
+        <Icon name="info" />
+        <span class="note-text">Note</span>
+    </div>
+    <span>
+        <slot />
+    </span>
+</div>
+
+<style>
+    .note {
+        display: flex;
+        flex-direction: column;
+        border-radius: 10px;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        margin: 30px 0px 30px 0;
+        border-left: 5px solid var(--info-dark);
+        padding: 30px;
+        gap: 10px;
+        background-color: var(--info);
+    }
+
+    .note__header {
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+        gap: 20px;
+    }
+
+    .note__header span {
+        font-size: 1.5rem;
+        color: var(--info-darker);
+        font-weight: bold;
+    }
+
+    .note-text {
+        font-size: 20px;
+    }
+
+    [data-icon="info"] {
+        font-size: 2rem;
+        color: var(--info-darker);
+    }
+</style>

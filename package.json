@@ -11,8 +11,19 @@
   },
   "dependencies": {
     "@astrojs/mdx": "^3.1.5",
+    "@astrojs/react": "^3.6.2",
     "@astrojs/rss": "^4.0.7",
     "@astrojs/sitemap": "^3.1.6",
-    "astro": "^4.15.2"
+    "@types/react": "^18.3.5",
+    "@types/react-dom": "^18.3.0",
+    "astro": "^4.15.2",
+    "astro-icon": "^1.1.1",
+    "katex": "^0.16.11",
+    "onnxruntime-web": "^1.19.2",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1",
+    "react-tsparticles": "^1.42.1",
+    "tsparticles": "^3.3.0",
+    "tsparticles-slim": "^2.12.0"
   }
 }

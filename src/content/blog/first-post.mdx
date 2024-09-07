@@ -1,0 +1,277 @@
+---
+title: 'Convolutional Neural Networks From Scratch'
+description: 'Lorem ipsum dolor sit amet'
+pubDate: 'Aug 31 2024'
+heroImage: '/neural net hero.jpg'
+---
+import Latex from '../../components/Latex.astro';
+import LatexBlock from '../../components/LatexBlock.astro';
+import Guesser from '../../components/Guesser.astro';
+import Note from '../../components/Note.astro';
+import forward from '../../videos/forward.webm';
+
+<h3>Introduction</h3>
+
+This is the first installment in a series of blog posts about Convolutional Neural Nets. In these blog posts I will give an overview of the mathematics behind, and the implementation of Convolutional Neural Nets. 
+
+We will be starting from an empty Python file. I will explain all of the mathematics and code that go into building a convolutional neural net from scratch, assuming as little math background as possible. We will not be using any machine learning libraries. Familiarity with Python would be a bonus, but is not required. 
+
+The convolutional neural net we will be building will be trained on the MNIST data set to read hand-written digits. I've loaded the exact model we will be training into the browser so that you can try it out for yourself. Play around with it and get a feel for what we will be building:
+
+<Guesser />
+
+<br/>
+We will start by building a simple feedforward neural net to learn the basics of how neural nets work. This will be the foundation upon which we build a more complicated convolutional neural net that is particularly well suited to image processing tasks like reading handwriting. 
+
+<hr/>
+<br/>
+
+<h3>What is a Neural Net?</h3>
+
+A neural network is essentially a **function approximator**. That might sound uninspiring, but almost all processes and relationships that exist can -- in principal -- be represented by a function and therefore approximated with a neural network.
+
+We will be focused on training a neural network to read handwriting, but you can train a neural network to do almost anything.
+
+The basis of a neural net is the neuron:
+
+![neuron](/neuron.png)
+
+Inputs <Latex formula='x_0' />, <Latex formula='x_1' /> and <Latex formula='x_2' /> are fed into the neuron. The neuron has weights corresponding to each of these inputs: <Latex formula='w_0' />, <Latex formula='w_1' /> and <Latex formula='w_2' />. The neuron also has a bias value <Latex formula='b' />. The weights and biases are called the _parameters_ of the neural net. Each input is multiplied by its corresponding weight. Those products are all summed up into one value, and then the bias is added to produce the weighted sum, <Latex formula='z' />.
+
+The weighted sum is then passed into some function called an “activation function”. There are different kinds of activation functions, but their fundamental property is that they are nonlinear. This nonlinearity is what allows neural nets to model non-linear relationships.
+
+A neural net is made up of **layers** of these neurons. A typical neural net has at least 3 layers: an input layer, a hidden layer, and an output layer. Every net must have an input and an output layer. The number of hidden layers depends — neural nets with many hidden layers are called “deep neural nets”. 
+
+It is important to note that the input layer does not actually have neurons. It is simply the input you pass into the net. It is often drawn in the same way as the other layers in the net, but it is important to keep this distinction in mind:
+
+<div style={{ textAlign: "center" }}>
+    ![network](/neural_net.png)
+</div>
+
+Here we see the layers of the neural net. Each circle represents a neuron. Each line corresponds to the weight of the connection between two neurons.
+
+This is a **feedforward neural net**; the simplest kind. The feedforward neural net has a few defining characteristics:
+- Connections between neurons only go forward.
+- Each neuron in one layer is fully connected to each neuron in the next layer.
+- The size of the input is fixed.
+
+We will begin by building out one of these feedforward neural networks layer-by-layer, and use that as a foundation for a more complicated network.
+
+<h3>The Forward Pass</h3>
+
+First thing's first we can stub out our neural net class:
+
+```python
+import numpy as np
+
+class FNN:
+    def __init__(self):
+        pass
+
+    def forward(self, input):
+        pass
+```
+
+<Note> <a href='https://numpy.org/'>Numpy</a> is the only dependency for this project. If you're following along at home you can either simply `pip install numpy` or set up a <a href='https://jupyter.org/try'>Jupyter Notebook</a> to work through this blog post.</Note>
+There are many ways we could go about implementing this, but we will be taking a principaled layer-by-layer approach. Each layer will be its own modular class that handles all of the calculations and state associated with that layer. This will not only allow us to keep our code clean and focused, but it will also allow us to play around with network designs by simply composing these layer classes.
+
+<h5>The Linear Layer</h5>
+
+The diagram of a nueron above shows the activation function as being *inside* the neuron however this need not be the case. In our implementation (and many other implementations) we separate the "linear" part (the weighted sum calculation) from the activation function and put them into their own layers.
+
+With that in mind we will begin by implementing the `Linear` layer:
+
+```python
+class Linear:
+    def __init__(self):
+        pass
+    
+    def forward(self, input):
+        pass
+```
+
+We need to do a couple things inside this class to implement the forward pass:
+- For each neuron, multiply the inputs by the weights.
+- For each neuron, add the bias value.
+
+You may see the words "for each" and be tempted to reach for a loop of some kind, but that is not necessary and will be very slow. Instead, we will be dealing with **matrices** and **vectors** to do the forward pass for the entire layer in one vectorized operation.
+
+In terms of matrices and vectors, the forward pass for the linear layer looks like this:
+
+
+<LatexBlock formula='Wx + b'/>
+
+Where:
+- <Latex formula='W' /> is the weight matrix.
+- <Latex formula='b' /> is the bias vector.
+- <Latex formula='x' /> is the input vector.
+
+The weight matrix is an <Latex formula='nxm' /> matrix where <Latex formula='n' /> is the number of neurons in the layer, and <Latex formula='m' /> is the size of the input.
+
+The bias vector is just an <Latex formula='n' /> dimensional vector , where <Latex formula='n' /> is the number of neurons in the layer.
+
+We need to initialize these weights and biases in the `__init__` method:
+
+```python
+class Linear:
+    def __init__(self, in_size, out_size):
+        self.weights = np.random.randn(out_size, in_size) * 0.1
+        self.bias = np.zeros(out_size)
+
+    def forward(self, input):
+        pass
+```
+
+<Note>Weight initialization is a topic worthy of its own blog post. Correctly initializing the weights of your network can have a massive impact. A general rule of thumb is that "smaller is better" for initial weights, but if you're interested in learning more look into **Kaiming initialization**.</Note>
+
+Now we have everything we need to do the forward pass of through our linear layer:
+
+```python
+class Linear:
+    def __init__(self, in_size, out_size):
+        self.weights = np.random.randn(out_size, in_size) * 0.1
+        self.bias = np.zeros(out_size)
+
+    def forward(self, input):
+        return input @ self.weights.T + self.bias
+```
+
+<br/>
+
+<h5>The ReLU Layer</h5>
+
+The next layer we will be implementing will be an activation function.
+
+First let's stub it out:
+
+```python
+class ReLU:
+    def forward(self, input):
+        pass
+```
+
+We will be choosing the "Rectified Linear Unit" (ReLU) nonlinearity for our simple network.
+
+ReLU is simple. For an input <Latex formula='x' /> we return <Latex formula='\text{max}(x, 0)' />. That's it.
+
+There's much more to say about ReLU, and why we are using it, but for now this is sufficient. We will dive deeper into ReLU when we talk about backpropagation.
+
+```python
+class ReLU:
+    def forward(self, input):
+        return np.maximum(input, 0)
+```
+
+<Note>For ReLU and most other activation activation functions, the activation function is applied **element-wise** to the input vector. In this case, we don't want the maximum of the entire input vector, <Latex formula='x' /> and 0. Instead, we want our output to be vector where each element is <Latex formula='\text{max}(x_i, 0)' /></Note>
+
+There's no `__init__` method because we don't need one!
+
+<h5>Putting it Together</h5>
+
+Beleive it or not, this is all we need to build a neural network and start feeding inputs through it. 
+
+Returning to the network class we stubbed out earlier, we can add some layers to it:
+
+
+```python
+class FNN:
+    def __init__(self):
+        self.fc1 = Linear(10, 10)
+        self.relu1 = Relu()
+        self.fc2 = Linear(10, 1)
+        self.relu2 = Relu()
+
+    def forward(self, input):
+        pass
+```
+
+Then, the forward pass for our network is just feeding the output from the previous layer into the next layer until we've worked all the way through the network:
+
+```python
+class FNN:
+    def __init__(self):
+        self.fc1 = Linear(10, 10)
+        self.relu1 = Relu()
+        self.fc2 = Linear(10, 1)
+        self.relu2 = Relu()
+
+    def forward(self, input):
+        x = self.fc1.forward(input)
+        x = self.relu.forward(x)
+        x = self.fc2.forward(x)
+        x = self.relu2.forward(x)
+        return x
+```
+
+And with that we can feed input through our network:
+
+```python
+net = FNN()
+
+input = np.random.randn(10)
+net.forwad(input)
+```
+
+But... this is useless. Ignoring the fact that we are not using real data yet, our parameters were intialized to random values and they never change. In order for our neural net to learn how to do something it needs to be **trained**.
+
+<h3>Training a Feedforward Neural Net</h3>
+
+Blah Blah Blah
+
+<h3>Convolutional Layers</h3>
+
+The only difference between a feedforward neural net and a convolutional neural net is the presence of **convolutional layers**. Before we dig into how we implement a convolutional layer, let's dig into the mathematics behind convolution and gain some intuition for why convolutional layers are so powerful for image processing tasks.
+
+<h5>What is Convolution?</h5>
+
+Let's pretend we are tracking the pressure readings on a submarine at certain times.
+
+We can get the pressure reading at a certain time with the function:
+
+<LatexBlock formula='x(t)' />
+
+Now suppose our pressure sensor is noisy. We would like to take an average over several measurements to get a less noisy estimate of the submarine's pressure. We'd like the most recent measurements to be weighted more heavily. We can do this by taking a weighted average that gives more weight to recent pressure readings. 
+
+We can construct a new function <Latex formula='w(a)' /> where <Latex formula='a' /> is the age of the reading. If we apply this weighted average at every moment <Latex formula='t' /> we end up with a new function:
+
+<LatexBlock formula='s(t) = \int_{-\infty}^\infty x(a)w(t - a)da' />
+
+This is called a **convolution**. It's essentially a combination of two functions by sliding one function (in this case <Latex formula='w(a)' />) over another (<Latex formula='x(t)' />), multiplying then together and and integrating the result.
+
+<h5>Discretized Convolution</h5>
+
+It's not realistic for our pressure sensor to make a reading at every possible timestep <Latex formula='t' />. Instead, we're probably going to be taking readings at **discrete** time steps. For example, we might take a reading ever 10 seconds.
+
+This is similar to the continous convolution above, only the integral becomes a sum:
+
+<LatexBlock formula='s(t) = \sum_{a = -\infty}^\infty x(a)w(t - a)' />
+
+In convolution terminology:
+- <Latex formula='x(t)' /> is the **input**
+- <Latex formula='w(a)' /> is the **kernel**. It's what's swept across the input.
+- <Latex formula='s(t)' /> is the **feature map**. It's the result of the convolution.
+
+<Note>You may notice the <Latex formula='\infty' /> in the summation and wonder how it's possible to perform a convolution from negative infinity to infinity. In practice, we implement this by implicitly padding the input with 0s everywhere that is outside the finite range of the input.</Note>
+<br/>
+
+<h5>Multidimensional Discretized Convolution</h5>
+
+In the above example we were doing convolution over a single dimension (time). We will be dealing with image data, though and that is 2-dimensional.
+
+To perform discretized convolution in 2 dimensions we need to use a 2-dimensional kernel:
+
+<LatexBlock formula='S(i, j) = \sum_m\sum_nI(m, n)K(i - m, j - n)' />
+
+Where the kernel is <Latex formula='mxn' /> (m is the height, n is the width).
+
+Convolution is *commutative*, so we can equivalently write:
+
+<LatexBlock formula='S(i, j) = \sum_m\sum_nI(i - m, j - n)K(m,n)' />
+
+<Note>We arrive at this commutation by **rotating** the kernel 180 degrees. We also need to rotate the kernel 180 degrees again during backpropagation. If we do not rotate the kernel, what we're doing is not technically convolution, and is instead **cross-correlation**. Practically speaking, flipping the kernel doesn't matter for the purposes of machine learning so we won't be doing it in our implementation for the sake of simplicity. </Note>
+
+
+
+<video width="100%" controls>
+ <source src={forward} type="video/webm" />
+</video>

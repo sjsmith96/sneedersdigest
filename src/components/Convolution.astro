@@ -1,0 +1,155 @@
+---
+---
+
+<div class="container">
+    <canvas id="conv-canvas" width="300" height="300"></canvas>
+    <div class="kernel-container">
+        <div class="kernel">
+            <input type="number" id="11" value="-1" min="-10" max="10"/>
+            <input type="number" id="12" value="0" min="-10" max="10"/>
+            <input type="number" id="13" value="1" min="-10" max="10"/>
+            <input type="number" id="21" value="-1" min="-10" max="10"/>
+            <input type="number" id="22" value="0" min="-10" max="10"/>
+            <input type="number" id="23" value="1" min="-10" max="10"/>
+            <input type="number" id="31" value="-1" min="-10" max="10"/>
+            <input type="number" id="32" value="0" min="-10" max="10"/>
+            <input type="number" id="33" value="1" min="-10" max="10"/>
+        </div>
+        <button id="btn" class="btn">Try Me!</button>
+    </div>
+    <canvas id="conv-canvas2" width="300" height="300"></canvas>
+</div>
+<script is:inline>
+    const image = new Image();
+    const canvas = document.getElementById('conv-canvas');
+    const ctx = canvas.getContext('2d');
+    const canvas2 = document.getElementById("conv-canvas2");
+    const ctx2 = canvas2.getContext('2d');
+    const button = document.getElementById('btn');
+
+
+    image.src = '/kitty.jpeg';
+    image.onload = () => {
+        ctx.drawImage(image, 0, 0, canvas.width, canvas.height);
+    };
+    
+
+    button?.addEventListener('click', () => {        
+        // Draw image onto the canvas
+        const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+        
+        const kernel = getKernel();
+        
+        const filteredData = applyConvolution(imageData, kernel);
+        ctx2.putImageData(filteredData, 0, 0);
+    })
+
+    function getKernel() {
+        const entry11 = +document.getElementById("11").value;
+        const entry12 = +document.getElementById("12").value;
+        const entry13 = +document.getElementById("13").value;
+        const entry21 = +document.getElementById("21").value;
+        const entry22 = +document.getElementById("22").value;
+        const entry23 = +document.getElementById("23").value;
+        const entry31 = +document.getElementById("31").value;
+        const entry32 = +document.getElementById("32").value;
+        const entry33 = +document.getElementById("33").value;
+
+        const kernel = [
+            [entry11, entry12, entry13],
+            [entry21, entry22, entry23],
+            [entry31, entry32, entry33],
+        ];
+
+        return kernel;
+    }
+
+    // Convolution function
+    function applyConvolution(imageData, kernel) {
+        const { width, height, data } = imageData;
+        const newImageData = ctx.createImageData(width, height);
+        const outputData = newImageData.data;
+
+        const kernelSize = kernel.length;
+        const halfKernelSize = Math.floor(kernelSize / 2);
+
+        // Traverse the image
+        for (let y = 0; y < height; y++) {
+            for (let x = 0; x < width; x++) {
+                let r = 0, g = 0, b = 0;
+
+                // Apply kernel to each pixel
+                for (let ky = -halfKernelSize; ky <= halfKernelSize; ky++) {
+                    for (let kx = -halfKernelSize; kx <= halfKernelSize; kx++) {
+                        const pixelX = Math.min(width - 1, Math.max(0, x + kx));
+                        const pixelY = Math.min(height - 1, Math.max(0, y + ky));
+                        const pixelIndex = (pixelY * width + pixelX) * 4;
+
+                        const weight = kernel[ky + halfKernelSize][kx + halfKernelSize];
+                        r += data[pixelIndex] * weight;
+                        g += data[pixelIndex + 1] * weight;
+                        b += data[pixelIndex + 2] * weight;
+                    }
+                }
+
+                // Set the new pixel values, clamping them between 0 and 255
+                const outputIndex = (y * width + x) * 4;
+                outputData[outputIndex] = Math.min(Math.max(r, 0), 255);
+                outputData[outputIndex + 1] = Math.min(Math.max(g, 0), 255);
+                outputData[outputIndex + 2] = Math.min(Math.max(b, 0), 255);
+                outputData[outputIndex + 3] = data[outputIndex + 3]; // Preserve alpha channel
+            }
+        }
+
+        return newImageData;
+    }
+</script>
+
+<style>
+    .container {
+        display: flex;
+        align-items: center;
+        gap: 20px;
+    }
+
+    .kernel-container {
+        margin: auto;
+        display: flex;
+        align-items: center;
+        flex-direction: column;
+        gap: 20px;
+    }
+
+    .kernel {
+        display: grid;
+        grid-template-columns: auto auto auto;
+        border: 2px solid rgb(var(--gray-light));
+        border-radius: 5px;
+        
+    }
+
+    input {
+        width: 3em;
+        text-align: center;
+        padding: 5px;
+        border: 0;
+        margin: 5px;
+        font-family: 'Atkinson', sans-serif;
+        background: rgb(var(--gray-gradient));
+    }
+
+    .btn {
+        background-color: var(--accent-dark);
+        color: white;
+        padding: 0.5em 1.5em 0.5em 1.5em;
+        border-radius: 10px;
+        border-style: none;
+        font-family: 'Atkinson', sans-serif;
+        font-size: 16px;
+    }
+
+    .btn:hover{
+        background-color: var(--accent);
+        cursor: pointer;
+    }
+</style>

@@ -9,6 +9,7 @@ import LatexBlock from '../../components/LatexBlock.astro';
 import Guesser from '../../components/Guesser.astro';
 import Note from '../../components/Note.astro';
 import forward from '../../videos/forward.webm';
+import Convolution from '../../components/Convolution.astro';
 
 <h3>Introduction</h3>
 
@@ -213,65 +214,3 @@ net.forwad(input)
 ```
 
 But... this is useless. Ignoring the fact that we are not using real data yet, our parameters were intialized to random values and they never change. In order for our neural net to learn how to do something it needs to be **trained**.
-
-<h3>Training a Feedforward Neural Net</h3>
-
-Blah Blah Blah
-
-<h3>Convolutional Layers</h3>
-
-The only difference between a feedforward neural net and a convolutional neural net is the presence of **convolutional layers**. Before we dig into how we implement a convolutional layer, let's dig into the mathematics behind convolution and gain some intuition for why convolutional layers are so powerful for image processing tasks.
-
-<h5>What is Convolution?</h5>
-
-Let's pretend we are tracking the pressure readings on a submarine at certain times.
-
-We can get the pressure reading at a certain time with the function:
-
-<LatexBlock formula='x(t)' />
-
-Now suppose our pressure sensor is noisy. We would like to take an average over several measurements to get a less noisy estimate of the submarine's pressure. We'd like the most recent measurements to be weighted more heavily. We can do this by taking a weighted average that gives more weight to recent pressure readings. 
-
-We can construct a new function <Latex formula='w(a)' /> where <Latex formula='a' /> is the age of the reading. If we apply this weighted average at every moment <Latex formula='t' /> we end up with a new function:
-
-<LatexBlock formula='s(t) = \int_{-\infty}^\infty x(a)w(t - a)da' />
-
-This is called a **convolution**. It's essentially a combination of two functions by sliding one function (in this case <Latex formula='w(a)' />) over another (<Latex formula='x(t)' />), multiplying then together and and integrating the result.
-
-<h5>Discretized Convolution</h5>
-
-It's not realistic for our pressure sensor to make a reading at every possible timestep <Latex formula='t' />. Instead, we're probably going to be taking readings at **discrete** time steps. For example, we might take a reading ever 10 seconds.
-
-This is similar to the continous convolution above, only the integral becomes a sum:
-
-<LatexBlock formula='s(t) = \sum_{a = -\infty}^\infty x(a)w(t - a)' />
-
-In convolution terminology:
-- <Latex formula='x(t)' /> is the **input**
-- <Latex formula='w(a)' /> is the **kernel**. It's what's swept across the input.
-- <Latex formula='s(t)' /> is the **feature map**. It's the result of the convolution.
-
-<Note>You may notice the <Latex formula='\infty' /> in the summation and wonder how it's possible to perform a convolution from negative infinity to infinity. In practice, we implement this by implicitly padding the input with 0s everywhere that is outside the finite range of the input.</Note>
-<br/>
-
-<h5>Multidimensional Discretized Convolution</h5>
-
-In the above example we were doing convolution over a single dimension (time). We will be dealing with image data, though and that is 2-dimensional.
-
-To perform discretized convolution in 2 dimensions we need to use a 2-dimensional kernel:
-
-<LatexBlock formula='S(i, j) = \sum_m\sum_nI(m, n)K(i - m, j - n)' />
-
-Where the kernel is <Latex formula='mxn' /> (m is the height, n is the width).
-
-Convolution is *commutative*, so we can equivalently write:
-
-<LatexBlock formula='S(i, j) = \sum_m\sum_nI(i - m, j - n)K(m,n)' />
-
-<Note>We arrive at this commutation by **rotating** the kernel 180 degrees. We also need to rotate the kernel 180 degrees again during backpropagation. If we do not rotate the kernel, what we're doing is not technically convolution, and is instead **cross-correlation**. Practically speaking, flipping the kernel doesn't matter for the purposes of machine learning so we won't be doing it in our implementation for the sake of simplicity. </Note>
-
-
-
-<video width="100%" controls>
- <source src={forward} type="video/webm" />
-</video>

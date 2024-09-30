@@ -15,9 +15,12 @@ ctx.strokeStyle = 'black';
 ctx.fillText("Loading model...", canvas.width / 2, canvas.height / 2);
 
 const session = await loadModel();
-ctx.clearRect(0, 0, canvas.width, canvas.height);
+if(session)
+{
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-ctx.fillText("Draw a number here!", canvas.width / 2, canvas.height / 2);
+  ctx.fillText("Draw a number here!", canvas.width / 2, canvas.height / 2);
+}
 
 let isShowingStartText = true;
 

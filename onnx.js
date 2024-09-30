@@ -1,5 +1,5 @@
 import ort from 'onnxruntime-web';
-
+ort.env.wasm.simd = false;
 
 
 

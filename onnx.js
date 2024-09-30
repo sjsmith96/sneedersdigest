@@ -1,15 +1,22 @@
 import ort from 'onnxruntime-web';
 
-const session = await loadModel();
+
+
+
 const canvas = document.getElementById("canvas");
 const ctx = canvas.getContext("2d");
-
 ctx.rect(0, 0, canvas.width, canvas.height);
 ctx.textAlign = "center";
 ctx.font = "20px InriaSans";
 ctx.lineWidth = 15;
 ctx.lineCap = 'round';
 ctx.strokeStyle = 'black';
+
+ctx.fillText("Loading model...", canvas.width / 2, canvas.height / 2);
+
+const session = await loadModel();
+ctx.clearRect(0, 0, canvas.width, canvas.height);
+
 ctx.fillText("Draw a number here!", canvas.width / 2, canvas.height / 2);
 
 let isShowingStartText = true;

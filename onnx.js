@@ -23,8 +23,15 @@ let isShowingStartText = true;
 
 // Load the ONNX model
 async function loadModel() {
-  const session = await ort.InferenceSession.create('/onnx_model.onnx');
-  return session;
+  try
+  {
+    const session = await ort.InferenceSession.create('/onnx_model.onnx');
+    return session;
+  }
+  catch(err)
+  {
+    ctx.fillText(`Error: ${err.message}`, canvas.width / 2, canvas.height / 2);
+  }
 }
 /**
  * Retrieve the array key corresponding to the largest element in the array.

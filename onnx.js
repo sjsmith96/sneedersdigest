@@ -33,7 +33,7 @@ async function loadModel() {
   }
   catch(err)
   {
-    ctx.fillText(`Error: ${err.message}`, canvas.width / 2, canvas.height / 2);
+    alert(err.message);
   }
 }
 /**

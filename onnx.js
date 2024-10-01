@@ -1,4 +1,4 @@
-import ort from 'onnxruntime-web';
+//import ort from 'onnxruntime-web';
 
 const canvas = document.getElementById("canvas");
 const ctx = canvas.getContext("2d");
@@ -11,28 +11,11 @@ ctx.strokeStyle = 'black';
 
 ctx.fillText("Loading model...", canvas.width / 2, canvas.height / 2);
 
-const session = await loadModel();
-if(session)
-{
-  ctx.clearRect(0, 0, canvas.width, canvas.height);
-
-  ctx.fillText("Draw a number here!", canvas.width / 2, canvas.height / 2);
-}
+const session = new onnx.InferenceSession();
+const loadingModelPromise = session.loadModel("/onnx_model.onnx");
 
 let isShowingStartText = true;
 
-// Load the ONNX model
-async function loadModel() {
-  try
-  {
-    const session = await ort.InferenceSession.create('/onnx_model.onnx');
-    return session;
-  }
-  catch(err)
-  {
-    alert(err.message);
-  }
-}
 /**
  * Retrieve the array key corresponding to the largest element in the array.
  *
@@ -46,12 +29,10 @@ function argMax(array) {
 
 async function guess() {
   const image = ctx.getImageData(0, 0, 280, 280);
-  const sneeds = {
-    '0': new ort.Tensor('float32', new Float32Array(image.data))
-  };
+  const input = new onnx.Tensor(new Float32Array(image.data), "float32");
 
-  const output = await session.run(sneeds);
-  const outputTensor = output["30"];
+  const outputMap = await session.run([input]);
+  const outputTensor = outputMap.values().next().value;
   const predictions = outputTensor.data;
   const maxPrediction = argMax(predictions);
   for (let i = 0; i < predictions.length; i++) {
@@ -77,19 +58,23 @@ async function guess() {
 let drawing = false;
 let started = false;
 
-canvas.addEventListener('mousedown', () => drawing = true);
-canvas.addEventListener('mouseup', () => {
-    drawing = false
-    started = false;
-});
-canvas.addEventListener('mousemove', draw);
-canvas.addEventListener('touchstart', () => drawing = true);
-canvas.addEventListener('touchend', () => {
-    drawing = false
-    started = false;
-});
-canvas.addEventListener('touchmove', draw);
+loadingModelPromise.then(() => {  
+  canvas.addEventListener('mousedown', () => drawing = true);
+  canvas.addEventListener('mouseup', () => {
+      drawing = false
+      started = false;
+  });
+  canvas.addEventListener('mousemove', draw);
+  canvas.addEventListener('touchstart', () => drawing = true);
+  canvas.addEventListener('touchend', () => {
+      drawing = false
+      started = false;
+  });
+  canvas.addEventListener('touchmove', draw);
 
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+  ctx.fillText("Draw a number here!", canvas.width / 2, canvas.height / 2);
+});
 function draw(event) {
     if (!drawing) return;
 

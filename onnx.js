@@ -77,14 +77,9 @@ loadingModelPromise.then(() => {
   canvas.addEventListener('mousemove', draw);
   // Set up touch events for mobile, etc
   canvas.addEventListener("touchstart", (e) => {
-    alert("Test");
     e.preventDefault();
-    mousePos = getTouchPos(canvas, e);
     var touch = e.touches[0];
-    var mouseEvent = new MouseEvent("mousedown", {
-      clientX: touch.clientX,
-      clientY: touch.clientY
-    });
+    var mouseEvent = new MouseEvent("mousedown", { });
     canvas.dispatchEvent(mouseEvent);
   }, false);
   canvas.addEventListener("touchend", (e) => {
@@ -93,6 +88,7 @@ loadingModelPromise.then(() => {
     canvas.dispatchEvent(mouseEvent);
   }, false);
   canvas.addEventListener("touchmove", (e) => {
+    alert("Test");
     e.preventDefault();
     var touch = e.touches[0];
     var mouseEvent = new MouseEvent("mousemove", {

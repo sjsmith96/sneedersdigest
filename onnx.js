@@ -93,10 +93,13 @@ loadingModelPromise.then(() => {
     try
     {
       e.preventDefault();
+      const touch = e.touches[0];
       const touchPos = getTouchPos(canvas, e);
       var mouseEvent = new MouseEvent("mousemove", {
-        offsetX: touchPos.x,
-        offsetY: touchPos.y
+        screenX: touch.screenX,
+        screenY: touch.screenY,
+        clientX: touch.clientX,
+        clientY: touch.clientY,
       });
       canvas.dispatchEvent(mouseEvent);
     }

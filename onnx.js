@@ -92,8 +92,8 @@ loadingModelPromise.then(() => {
       e.preventDefault();
       const touchPos = getTouchPos(canvas, e);
       var mouseEvent = new MouseEvent("mousemove", {
-        clientX: e.targetTouches[0].clientX,
-        clientY: e.targetTouches[0].clientY
+        clientX: touchPos.x,
+        clientY: touchPos.y
       });
       canvas.dispatchEvent(mouseEvent);
     }
@@ -109,7 +109,7 @@ loadingModelPromise.then(() => {
 function draw(event) {
     if (!drawing) return;
 
-    console.log(event.offsetX, event.offsetY);
+    alert(event.offsetX, event.offsetY);
     
     if(!started)
     {

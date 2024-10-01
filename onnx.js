@@ -77,6 +77,7 @@ loadingModelPromise.then(() => {
   canvas.addEventListener('mousemove', draw);
   // Set up touch events for mobile, etc
   canvas.addEventListener("touchstart", (e) => {
+    alert("Test");
     e.preventDefault();
     mousePos = getTouchPos(canvas, e);
     var touch = e.touches[0];

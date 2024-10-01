@@ -89,6 +89,7 @@ loadingModelPromise.then(() => {
   canvas.addEventListener("touchmove", (e) => {
     e.preventDefault();
     var touch = e.touches[0];
+    alert(touch);
     touchPos = getTouchPos(canvas, touch);
     alert(touchPos);
     var mouseEvent = new MouseEvent("mousemove", {

@@ -1,7 +1,4 @@
 import ort from 'onnxruntime-web';
-ort.env.wasm.simd = false;
-
-
 
 const canvas = document.getElementById("canvas");
 const ctx = canvas.getContext("2d");

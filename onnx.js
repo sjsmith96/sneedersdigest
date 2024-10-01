@@ -87,14 +87,21 @@ loadingModelPromise.then(() => {
     canvas.dispatchEvent(mouseEvent);
   }, false);
   canvas.addEventListener("touchmove", (e) => {
-    e.preventDefault();
-    const touchPos = getTouchPos(canvas, e);
-    alert(touchPos);
-    var mouseEvent = new MouseEvent("mousemove", {
-      offsetX: touchPos.x,
-      offsetY: touchPos.y
-    });
-    canvas.dispatchEvent(mouseEvent);
+    try
+    {
+      e.preventDefault();
+      const touchPos = getTouchPos(canvas, e);
+      alert(touchPos);
+      var mouseEvent = new MouseEvent("mousemove", {
+        offsetX: touchPos.x,
+        offsetY: touchPos.y
+      });
+      canvas.dispatchEvent(mouseEvent);
+    }
+    catch(err)
+    {
+      alert(err.message);
+    }
   }, false);
 
   ctx.clearRect(0, 0, canvas.width, canvas.height);

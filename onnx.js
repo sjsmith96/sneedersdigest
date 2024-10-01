@@ -116,8 +116,6 @@ loadingModelPromise.then(() => {
 function draw(event) {
     if (!drawing) return;
 
-    alert(`x: ${event.offsetX}, y: ${event.offsetY}`);
-
     if(!started)
     {
         started = true;

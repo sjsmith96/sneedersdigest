@@ -69,13 +69,24 @@ function getTouchPos(canvas, touchEvent) {
 }
 
 loadingModelPromise.then(() => {  
+  /*
   canvas.addEventListener('mousedown', () => drawing = true);
   canvas.addEventListener('mouseup', () => {
       drawing = false
       started = false;
   });
   canvas.addEventListener('mousemove', draw);
+  */
 
+  canvas.addEventListener('pointerdown', () => drawing = true);
+  canvas.addEventListener('pointerup', () => {
+      drawing = false
+      started = false;
+  });
+  canvas.addEventListener('pointermove', draw);
+
+
+  /*
   // Set up touch events for mobile, etc
   canvas.addEventListener("touchstart", (e) => {
     e.preventDefault();
@@ -109,7 +120,7 @@ loadingModelPromise.then(() => {
       alert(err.message);
     }
   }, false);
-
+*/
   ctx.clearRect(0, 0, canvas.width, canvas.height);
   ctx.fillText("Draw a number here!", canvas.width / 2, canvas.height / 2);
 });

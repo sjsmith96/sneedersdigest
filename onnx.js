@@ -82,6 +82,7 @@ loadingModelPromise.then(() => {
     canvas.dispatchEvent(mouseEvent);
   }, false);
   canvas.addEventListener("touchend", (e) => {
+    alert('test');
     e.preventDefault();
     var mouseEvent = new MouseEvent("mouseup", {});
     canvas.dispatchEvent(mouseEvent);
@@ -109,7 +110,6 @@ loadingModelPromise.then(() => {
 function draw(event) {
     if (!drawing) return;
 
-    alert(event.offsetX, event.offsetY);
     
     if(!started)
     {

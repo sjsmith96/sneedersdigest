@@ -58,12 +58,13 @@ async function guess() {
 let drawing = false;
 let started = false;
 
-// Get the position of a touch relative to the canvas
-function getTouchPos(canvasDom, touchEvent) {
-  var rect = canvasDom.getBoundingClientRect();
+// Function to get touch position relative to the canvas
+function getTouchPos(canvas, touchEvent) {
+  const rect = canvas.getBoundingClientRect();
+  const touch = touchEvent.touches[0];
   return {
-    x: touchEvent.touches[0].clientX - rect.left,
-    y: touchEvent.touches[0].clientY - rect.top
+    x: touch.clientX - rect.left,
+    y: touch.clientY - rect.top
   };
 }
 
@@ -76,6 +77,7 @@ loadingModelPromise.then(() => {
   canvas.addEventListener('mousemove', draw);
   // Set up touch events for mobile, etc
   canvas.addEventListener("touchstart", (e) => {
+    e.preventDefault();
     mousePos = getTouchPos(canvas, e);
     var touch = e.touches[0];
     var mouseEvent = new MouseEvent("mousedown", {
@@ -85,10 +87,12 @@ loadingModelPromise.then(() => {
     canvas.dispatchEvent(mouseEvent);
   }, false);
   canvas.addEventListener("touchend", (e) => {
+    e.preventDefault();
     var mouseEvent = new MouseEvent("mouseup", {});
     canvas.dispatchEvent(mouseEvent);
   }, false);
   canvas.addEventListener("touchmove", (e) => {
+    e.preventDefault();
     var touch = e.touches[0];
     var mouseEvent = new MouseEvent("mousemove", {
       clientX: touch.clientX,

@@ -78,7 +78,6 @@ loadingModelPromise.then(() => {
   // Set up touch events for mobile, etc
   canvas.addEventListener("touchstart", (e) => {
     e.preventDefault();
-    var touch = e.touches[0];
     var mouseEvent = new MouseEvent("mousedown", { });
     canvas.dispatchEvent(mouseEvent);
   }, false);
@@ -88,12 +87,12 @@ loadingModelPromise.then(() => {
     canvas.dispatchEvent(mouseEvent);
   }, false);
   canvas.addEventListener("touchmove", (e) => {
-    alert("Test");
     e.preventDefault();
     var touch = e.touches[0];
+    touchPos = getTouchPos(canvas, touch);
     var mouseEvent = new MouseEvent("mousemove", {
-      clientX: touch.clientX,
-      clientY: touch.clientY
+      offsetX: touchPos.x,
+      offsetY: touchPos.y
     });
     canvas.dispatchEvent(mouseEvent);
   }, false);

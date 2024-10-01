@@ -63,8 +63,8 @@ function getTouchPos(canvas, touchEvent) {
   const rect = canvas.getBoundingClientRect();
   const touch = touchEvent.touches[0];
   return {
-    x: touch.clientX - rect.left,
-    y: touch.clientY - rect.top
+    x: touch.clientX - rect.x,
+    y: touch.clientY - rect.y
   };
 }
 
@@ -91,7 +91,7 @@ loadingModelPromise.then(() => {
     {
       e.preventDefault();
       const touchPos = getTouchPos(canvas, e);
-      alert(`x: ${touchPos.x}, y: ${touchPos.y}`);
+      //alert(`x: ${touchPos.x}, y: ${touchPos.y}`);
       var mouseEvent = new MouseEvent("mousemove", {
         offsetX: touchPos.x,
         offsetY: touchPos.y
@@ -110,6 +110,8 @@ loadingModelPromise.then(() => {
 function draw(event) {
     if (!drawing) return;
 
+    console.log(event.offsetX, event.offsetY);
+    
     if(!started)
     {
         started = true;

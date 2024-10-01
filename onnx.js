@@ -75,26 +75,28 @@ loadingModelPromise.then(() => {
       started = false;
   });
   canvas.addEventListener('mousemove', draw);
+
   // Set up touch events for mobile, etc
   canvas.addEventListener("touchstart", (e) => {
     e.preventDefault();
-    var mouseEvent = new MouseEvent("mousedown", { });
+    var mouseEvent = new MouseEvent("mousedown");
     canvas.dispatchEvent(mouseEvent);
   }, false);
+
   canvas.addEventListener("touchend", (e) => {
-    alert('test');
     e.preventDefault();
-    var mouseEvent = new MouseEvent("mouseup", {});
+    var mouseEvent = new MouseEvent("mouseup");
     canvas.dispatchEvent(mouseEvent);
   }, false);
+
   canvas.addEventListener("touchmove", (e) => {
     try
     {
       e.preventDefault();
       const touchPos = getTouchPos(canvas, e);
       var mouseEvent = new MouseEvent("mousemove", {
-        clientX: touchPos.x,
-        clientY: touchPos.y
+        offsetX: touchPos.x,
+        offsetY: touchPos.y
       });
       canvas.dispatchEvent(mouseEvent);
     }
@@ -107,10 +109,12 @@ loadingModelPromise.then(() => {
   ctx.clearRect(0, 0, canvas.width, canvas.height);
   ctx.fillText("Draw a number here!", canvas.width / 2, canvas.height / 2);
 });
+
 function draw(event) {
     if (!drawing) return;
 
-    
+    alert(`x: ${event.offsetX}, y: ${event.offsetY}`);
+
     if(!started)
     {
         started = true;

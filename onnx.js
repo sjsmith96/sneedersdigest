@@ -93,8 +93,8 @@ loadingModelPromise.then(() => {
       const touchPos = getTouchPos(canvas, e);
       alert(`x: ${touchPos.x}, y: ${touchPos.y}`);
       var mouseEvent = new MouseEvent("mousemove", {
-        offsetX: touchPos.x,
-        offsetY: touchPos.y
+        clientX: touchPos.x,
+        clientY: touchPos.y
       });
       canvas.dispatchEvent(mouseEvent);
     }

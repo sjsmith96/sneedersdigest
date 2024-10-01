@@ -101,6 +101,7 @@ loadingModelPromise.then(() => {
         clientX: touch.clientX,
         clientY: touch.clientY,
       });
+      alert(mouseEvent.offsetX);
       canvas.dispatchEvent(mouseEvent);
     }
     catch(err)
